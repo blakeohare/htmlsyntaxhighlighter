@@ -1,0 +1,14 @@
+.bhsh_code {
+	font-family: "Consolas", monospace;
+	background-color: #1d1d1d;
+	border-radius: 8px;
+	padding:8px;
+	color: #d4d4d4;
+	line-height:130%;
+}
+.bhsh_string { color: #ce9178; }
+.bhsh_keyword { color: #c586a1; text-shadow:0px 0px 1px #c586a1; }
+.bhsh_constant { color: #499cb3; text-shadow:0px 0px 1px #499cb3; }
+.bhsh_class { color: #4ec9b0; text-shadow:0px 0px 1px #499cb3; }
+.bhsh_number { color: #b5cea8; }
+.bhsh_comment { color: #6a9955; }
