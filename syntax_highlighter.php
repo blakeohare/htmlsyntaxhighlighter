@@ -121,6 +121,9 @@
                     $c = $token[0];
                     $type = null;
                     switch ($c) {
+                        case '@':
+                            $type = 'annotation';
+                            break;
                         case '/':
                         case '#':
                             $type = 'comment';
@@ -205,9 +208,10 @@
                     return $c;
             }
             $c2 = $this->index + 1 < $this->length ? $this->str[$this->index + 1] : '';
-            if ($c === '_' || $this->letters[$c]) return $this->pop_entity(false);
-            if ($this->nums[$c]) return $this->pop_entity(true);
-            if ($c === '.' && $this->nums[$c2]) return $this->pop_entity(true);
+            if ($c === '_' || $this->letters[$c]) return $this->pop_entity(false, false);
+            if ($this->nums[$c]) return $this->pop_entity(true, false);
+            if ($c === '.' && $this->nums[$c2]) return $this->pop_entity(true, false);
+            if ($c === '@' && $this->letters[$c2]) return $this->pop_entity(false, true);
 
             switch ($c) {
                 case '#':
@@ -268,13 +272,19 @@
             return implode('', $sb);
         }
 
-        function pop_entity($is_number) {
+        function pop_entity($is_number, $is_annotation) {
             $sb = array();
             $c = $this->str[$this->index];
             $period_found = false;
+            $at_found = false;
             while ($this->index < $this->length) {
                 $c = $this->str[$this->index];
-                if ($this->letters[$c] || $this->nums[$c] || $c === '_' || ($is_number && $c === '.' && !$period_found)) {
+                if ($this->letters[$c] ||
+                    $this->nums[$c] ||
+                    $c === '_' ||
+                    ($is_annotation && $c === '@' && !$at_found) ||
+                    ($is_number && $c === '.' && !$period_found) ||
+                    ($is_annotation && $c === '.')) {
                     array_push($sb, $c);
                     if ($c === '.')  $period_found = true;
                 } else {
