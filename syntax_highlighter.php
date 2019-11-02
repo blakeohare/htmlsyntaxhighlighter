@@ -24,6 +24,8 @@
 		function __construct($language) {
 			$this->language = strtolower(trim($language));
 			switch ($language) {
+				case 'none':
+					break;
 				case 'python':
 					$this->tab_size = 2;
 					$this->string_types = array('"', "'");
@@ -42,7 +44,7 @@
 
 			switch ($this->language) {
 				case 'python':
-					$keywords = explode(' ', 'as class def elif else except finally for from if import in lambda print raise try while with');
+					$keywords = explode(' ', 'as class def elif else except finally for from if import in lambda print raise return try while with');
 					$constants = explode(' ', 'False None self super True');
 					$classes = explode(' ', 'Exception');
 					break;

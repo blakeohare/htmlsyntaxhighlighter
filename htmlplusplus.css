@@ -1,0 +1,13 @@
+.hpp_tableofcontents {
+    padding: 10px;
+    border: 1px solid #bbb;
+    margin: 10px;
+}
+
+h2.hpp_header {
+    margin:0px;
+    margin-top:20px;
+    margin-bottom:8px;
+    font-size:16pt;
+    font-weight:bold;
+}
