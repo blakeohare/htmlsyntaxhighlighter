@@ -43,6 +43,11 @@ class Meow:
 
     Lorem ipsum dolar sit amet
 
+    <div>
+    <image mouseover="totoro">https://twocansandstring.com/uploads/drawn/4712.png</image>
+    </div>
+
+    <p>5</p>
     ';
 
     $rendered_content = (new HtmlPlusPlusParser($content))->parse();

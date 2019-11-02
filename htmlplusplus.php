@@ -50,7 +50,7 @@
             Creates a note box. <warning> does similar.
 
             <image>
-            Usage: <image alt="alt text">URL</image>
+            Usage: <image alt="alt text" mouseover="Mouseover text for witty comment.">URL</image>
             Inserts an image pointing at the given URL. If the alt text is not provided, it'll automatically get injected using the filename of the URL.
 
             <heading>
@@ -146,6 +146,10 @@
                     $this->output('<div class="' . $tag['@name'] . '_box">');
                     break;
 
+                case 'image':
+                    $tag['@url'] = '';
+                    break;
+
                 case 'code':
                     $tag['@code'] = '';
                     break;
@@ -165,6 +169,7 @@
         }
 
         private function pop_tag($tag) {
+            // TODO: bug here: you can pop an h2 with a header tag and vice versa
             if ($tag === 'header') $tag = 'h2';
 
             $opener = null;
@@ -189,6 +194,32 @@
                     }
                     break;
 
+                case 'image':
+                    print_r($opener);
+                    if (isset($opener['@url'])) {
+                        $url = trim($opener['@url']);
+                        $alt_text = trim($opener['alt']);
+                        if ($alt_text === '') {
+                            $t = explode('/', $url);
+                            print_r($t);
+                            $alt_text = htmlspecialchars($t[count($t) - 1]);
+                        }
+
+                        if (isset($opener['mouseover'])) {
+                            $opener['title'] = $opener['mouseover'];
+                            unset($opener['mouseover']);
+                        }
+
+                        $this->output('<img src="' . $url . '" alt="' . $alt_text . '"');
+                        foreach ($opener as $attr => $value) {
+                            if ($attr[0] !== '@' && $attr !== 'comment') {
+                                $this->output(' ' . $attr . '="' . $value . '"');
+                            }
+                        }
+                        $this->output('/>');
+                    }
+                    break;
+
                 case 'note':
                 case 'warning':
                     $this->output('</div>');
@@ -202,7 +233,6 @@
 
                     $this->output('<div');
                     foreach ($opener as $attr => $value) {
-                        // TODO: use @ prefix for code attribute
                         if ($attr[0] !== '@' && $attr !== 'language' && $attr !== 'classes') {
                             $this->output(' ' . $attr . '="' . $value . '"');
                         }
@@ -229,7 +259,7 @@
         }
 
         function parse() {
-            $mode = 'NORMAL'; // { NORMAL | CODE }
+            $mode = 'NORMAL'; // { NORMAL | CODE | IMAGE }
             $stack = array();
             $mode_stack = array('NORMAL');
 
@@ -243,6 +273,8 @@
                     case 'TEXT':
                         if ($mode === 'CODE') {
                             $this->set_attribute_on_top_tag('@code', $token['value']);
+                        } else if ($mode === 'IMAGE') {
+                            $this->set_attribute_on_top_tag('@url', $token['value']);
                         } else {
                             $this->output_text($token['value']);
                         }
@@ -254,6 +286,9 @@
                             case 'code':
                                 array_push($mode_stack, 'CODE');
                                 break;
+                            case 'image':
+                                array_push($mode_stack, 'IMAGE');
+                                break;
                         }
                         $mode = $mode_stack[count($mode_stack) - 1];
                         break;
@@ -263,6 +298,7 @@
 
                         switch ($token['value']) {
                             case 'code':
+                            case 'image':
                                 array_pop($mode_stack);
                                 $mode = $mode_stack[count($mode_stack) - 1];
                                 break;
