@@ -147,7 +147,7 @@
                     break;
 
                 case 'code':
-
+                    $tag['@code'] = '';
                     break;
 
                 default:
@@ -197,13 +197,13 @@
                 case 'code':
                     $syntax = isset($opener['language']) ?  $opener['language'] : 'none';
                     $classes = isset($opener['classes']) ? explode(',', str_replace(' ', ',', $opener['classes'])) : array(); // classes are trimmed and ignored if empty.
-                    $code  = $opener['code'];
+                    $code  = $opener['@code'];
                     $html = (new BlakesHtmlSyntaxHighlighter($syntax))->highlight($code, $classes);
 
                     $this->output('<div');
                     foreach ($opener as $attr => $value) {
                         // TODO: use @ prefix for code attribute
-                        if ($attr[0] !== '@' && $attr !== 'language' && $attr !== 'classes' && $attr !== 'code') {
+                        if ($attr[0] !== '@' && $attr !== 'language' && $attr !== 'classes') {
                             $this->output(' ' . $attr . '="' . $value . '"');
                         }
                     }
@@ -242,7 +242,7 @@
 
                     case 'TEXT':
                         if ($mode === 'CODE') {
-                            $this->set_attribute_on_top_tag('code', $token['value']);
+                            $this->set_attribute_on_top_tag('@code', $token['value']);
                         } else {
                             $this->output_text($token['value']);
                         }
