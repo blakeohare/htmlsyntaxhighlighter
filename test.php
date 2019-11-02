@@ -23,7 +23,7 @@ class Meow:
 
   @abstractmethod
   def weeeeee(self):
-    return 3.14159
+    return -3.14159
 
   def blarg(self):
     for i in range(1, 10):

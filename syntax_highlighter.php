@@ -133,6 +133,14 @@
                         case "`":
                             $type = 'string';
                             break;
+                        case '.':
+                            $type = 'number';
+                            break;
+                        default:
+                            if (ord($c) >= ord('0') && ord($c) <= ord('9')) {
+                                $type = 'number';
+                            }
+                            break;
                     }
                     if ($type !== null) {
                         array_push($output,
