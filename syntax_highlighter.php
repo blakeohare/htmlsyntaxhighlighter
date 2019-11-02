@@ -8,6 +8,7 @@
 		- bhsh_string
 		- bhsh_keyword
 		- bhsh_constant
+		- bhsh_control
 		- bhsh_classname
 		- bhsh_number
 		- bhsh_comment
@@ -44,7 +45,8 @@
 
 			switch ($this->language) {
 				case 'python':
-					$keywords = explode(' ', 'as class def elif else except finally for from if import in lambda print raise return try while with');
+					$control_flow = explode(' ', 'continue elif else except finally for if pass raise return try while with yield');
+					$keywords = explode(' ', 'and as class def from import in lambda not or print');
 					$constants = explode(' ', 'False None self super True');
 					$classes = explode(' ', 'Exception');
 					break;
@@ -52,6 +54,7 @@
 
 			$named = array(
 				'keyword' => $keywords,
+				'control' => $control_flow,
 				'constant' => $constants,
 				'class' => $classes,
 			);
