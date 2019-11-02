@@ -23,11 +23,11 @@ def foo():
 
     Lorem ipsum dolar sit amet
 
-    
+
     <header><bookmark>Topic 2</bookmark></header>
 
     Lorem ipsum dolar sit amet
-    
+
     ';
 
     $rendered_content = (new HtmlPlusPlusParser($content))->parse();

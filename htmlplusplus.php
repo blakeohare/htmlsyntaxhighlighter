@@ -1,8 +1,8 @@
 <?php
     /*
         A simple server-side way to create content with complicated but automatic features such as table-of-contents, syntax highlighting in code snippets, and
-        other. 
-        
+        other.
+
         Focus is on technical blog content from for HTML code written from **TRUSTED** 1st-party sources.
         This will NOT sanitize untrusted HTML submitted by your users.
 
@@ -12,7 +12,7 @@
 
 
         Features:
-            
+
             <code>
             Usage: <code language="python" classes="MyClass">...</code>
             Adds syntax highlighting to the snippet of code. If it's on a line by itself, then it creates a large code block.
@@ -62,7 +62,7 @@
             Generates a text block that is formatted like the code block, but isn't monospace and allows other inline HTML.
     */
     class HtmlPlusPlusParser {
-        
+
         private $str;
         private $index = 0;
         private $length;
@@ -115,7 +115,7 @@
                 case 'comment':
                     $this->comment_nest_level++;
                     break;
-                
+
                 case 'bookmark':
                     $a_name = isset($tag['name']) ? trim($tag['name']) : ('h' . ($this->bookmark_counter++));
                     $uid = base64_encode(random_bytes(30));
@@ -147,7 +147,7 @@
                     break;
 
                 case 'code':
-                    
+
                     break;
 
                 default:
@@ -177,7 +177,7 @@
                 case 'comment':
                     $this->comment_nest_level--;
                     break;
-                
+
                 case 'bookmark':
                     $uid = $opener['@uid'];
                     $label = implode('', $this->active_text_listeners[$uid]);
@@ -188,7 +188,7 @@
                         }
                     }
                     break;
-                
+
                 case 'note':
                 case 'warning':
                     $this->output('</div>');
@@ -248,7 +248,7 @@
 
                     case 'CLOSETAG':
                         $this->pop_tag($token['value']);
-                        
+
                         switch ($token['value']) {
                             case 'code':
                                 array_pop($mode_stack);
@@ -269,14 +269,14 @@
 
                     default:
                         throw new Exception("Unknown token type: '" . $token['type'] . "'");
-                    
+
                 }
             }
 
             $output = implode($this->output);
             //print_r($this);
             if ($this->table_of_contents_index !== null && count($this->bookmark_list) > 0) {
-                
+
                 $i = $this->table_of_contents_index;
                 $front = substr($output, 0, $i);
                 $back = substr($output, $i);
@@ -426,7 +426,7 @@
                 $this->pop_expected('=');
                 $this->skip_whitespace();
                 $escaped_value = $this->pop_attribute_value();
-                
+
                 $output[$attribute_name] = $escaped_value;
             }
         }
