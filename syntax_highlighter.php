@@ -1,5 +1,10 @@
 <?php
 
+    function highlight_syntax($code, $language, $classes = null) {
+        $syntax_highlighter = new BlakesHtmlSyntaxHighlighter($language);
+        return $syntax_highlighter->highlight($code, $classes);
+    }
+
     /*
         Generates HTML snippets.
 
@@ -21,6 +26,7 @@
         private $comment_types = array();
         private $token_lookup = array();
         private $built_in_class_name_lookup = array();
+        private $class_name_chars = array();
 
         function __construct($language) {
             $this->language = strtolower(trim($language));
@@ -36,6 +42,13 @@
                     throw new Exception($language . " is not currently supported by the syntax highlighter.");
             }
             $this->token_lookup = $this->build_lookup_table();
+
+            for ($i = 0; $i < 26; ++$i) {
+                $this->class_name_chars[chr($i + ord('a'))] = true;
+                $this->class_name_chars[chr($i + ord('A'))] = true;
+                if ($i < 10) $this->class_name_chars[$i . ''] = true;
+            }
+            $this->class_name_chars['_'] = true;
         }
 
         private function build_lookup_table() {
@@ -100,8 +113,99 @@
             return $code;
         }
 
+        function scanner_skip_whitespace($str, $index) {
+            while ($index < strlen($str)) {
+                switch ($str[$index]) {
+                    case ' ':
+                    case "\n":
+                    case "\r":
+                    case "\t":
+                        $index++;
+                        break;
+                    default:
+                        return $index;
+                }
+            }
+            return $index;
+        }
+
+        function scanner_pop_token($str, $start_index) {
+            $index = $this->scanner_skip_whitespace($str, $start_index);
+            $sb = array();
+            $end = strlen($str);
+            for ($i = $index; $i < strlen($str); ++$i) {
+                $c = $str[$i];
+                if ($this->class_name_chars[$c]) {
+                    array_push($sb, $c);
+                } else {
+                    $end = $i;
+                    break;
+                }
+            }
+
+            $token = implode($sb);
+            return array('token' => $token, 'found' => strlen($token) > 0, 'index' => $end);
+        }
+
+        function string_occurs_at($haystack, $needle, $index) {
+            $nlength = strlen($needle);
+            $hlength = strlen($haystack);
+            if ($nlength === 0) return false;
+            if ($index < 0) return false;
+            if ($index + $nlength > $hlength) return false;
+            if ($haystack[$index] !== $needle[0]) return false;
+            if ($nlength === 1) return true;
+            if (substr($haystack, $index, $nlength) === $needle) return true;
+            return false;
+        }
+
+        function python_class_scan($code) {
+            // TODO: gather names from the subclasses in class definitions
+            $classes = array();
+            $lines = explode("\n", $code);
+            foreach ($lines as $raw_line) {
+                $line = trim($raw_line);
+                if (strlen($line) > 0) {
+                    if ($line[0] === 'c' && substr($line, 0, 6) === 'class ') {
+                        $token = $this->scanner_pop_token($line, 5);
+                        if ($token['found']) {
+                            $classes[$token['token']] = true;
+                        }
+                    } else {
+                        $raise_index = strpos($line, 'raise ');
+                        if ($raise_index !== false) {
+                            $token = $this->scanner_pop_token($line, $raise_index + 5);
+                            if ($token['found']) {
+                                $class_name = $token['token'];
+                                $index = $token['index'];
+                                $index = $this->scanner_skip_whitespace($line, $index);
+                                if ($this->string_occurs_at($line, '(', $index)) {
+                                    $classes[$class_name] = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $output = array();
+            foreach ($classes as $class_name => $_) {
+                if (strtoupper($class_name[0]) === $class_name[0]) {
+                    array_push($output, $class_name);
+                }
+            }
+
+            return $output;
+        }
+
         function highlight($code, $class_names = null) {
             $class_names = $class_names == null ? array() : $class_names;
+            $more_classes = array();
+            switch ($this->language) {
+                case 'python': $more_classes = $this->python_class_scan($code); break;
+                default: break;
+            }
+            $class_names = array_merge($class_names, $more_classes);
             $class_name_lookup = array();
             if ($class_names !== null) {
                 foreach ($class_names as $cn) $class_name_lookup[$cn] = true;

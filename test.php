@@ -15,6 +15,8 @@ def foo():
   print("HEllo, WoRld!")
   for i in range(20):
     raise Exception("Meow")
+  if cond:
+    raise MyException("Woof")
   return "waffles"
 
 class Meow:
