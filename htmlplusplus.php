@@ -196,10 +196,22 @@
 
                 case 'code':
                     $syntax = isset($opener['language']) ?  $opener['language'] : 'none';
-                    $classes = isset($opener['classes']) ? explode(',', $opener['classes']) : array();
+                    $classes = isset($opener['classes']) ? explode(',', str_replace(' ', ',', $opener['classes'])) : array(); // classes are trimmed and ignored if empty.
                     $code  = $opener['code'];
                     $html = (new BlakesHtmlSyntaxHighlighter($syntax))->highlight($code, $classes);
+
+                    $this->output('<div');
+                    foreach ($opener as $attr => $value) {
+                        // TODO: use @ prefix for code attribute
+                        if ($attr[0] !== '@' && $attr !== 'language' && $attr !== 'classes' && $attr !== 'code') {
+                            $this->output(' ' . $attr . '="' . $value . '"');
+                        }
+                    }
+                    $this->output('>');
+
                     $this->output($html);
+                    $this->output('</div>');
+
                     break;
 
                 case 'tableofcontents':

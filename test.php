@@ -9,7 +9,7 @@
 
     <tableofcontents/>
 
-    <code language="python">
+    <code class="syntax_vscode" language="python">
 
 def foo():
   print("HEllo, WoRld!")
@@ -51,7 +51,7 @@ class Meow:
 ?><html>
     <head>
         <title>HTML++ Test Page</title>
-        <link rel="stylesheet" type="text/css" href="vscode_styling.css"/>
+        <link rel="stylesheet" type="text/css" href="syntax_styling.css"/>
         <link rel="stylesheet" type="text/css" href="htmlplusplus.css"/>
         <style type="text/css">
 body {
