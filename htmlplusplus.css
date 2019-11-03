@@ -13,13 +13,13 @@ h2.hpp_header {
 }
 
 .inline_code {
-    background-color:#eee;
-    white-space: pre;
-    font-family: "Consolas", monospace;
-    color: #048;
-    padding:2px;
-    border-radius:2px;
-    border: 1px solid #ccc;
+    background-color:#f4f4f4; 
+    font-family: "Consolas", "Monaco", monospace;
+    color: #04a;
+    padding:4px;
+    border-radius:3px;
+    font-size:11pt;
+    display: inline-block;
 }
 
 body {

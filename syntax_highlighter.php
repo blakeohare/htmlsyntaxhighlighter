@@ -58,8 +58,8 @@
 
             switch ($this->language) {
                 case 'python':
-                    $control_flow = explode(' ', 'continue elif else except finally for if pass raise return try while with yield');
-                    $keywords = explode(' ', 'and as class def from import in lambda not or print');
+                    $control_flow = explode(' ', 'continue elif else except finally for if import pass raise return try while with yield');
+                    $keywords = explode(' ', 'and as class def from in lambda not or print');
                     $constants = explode(' ', 'False None self super True');
                     $classes = explode(' ', 'Exception');
                     break;
