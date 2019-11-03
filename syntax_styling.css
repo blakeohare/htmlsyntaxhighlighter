@@ -10,7 +10,7 @@
 .syntax_vscode .bhsh_control { color: #c586a1; text-shadow:0px 0px 1px #c586a1; }
 .syntax_vscode .bhsh_constant { color: #499cb3; text-shadow:0px 0px 1px #499cb3; }
 .syntax_vscode .bhsh_keyword { color: #499cb3; text-shadow:0px 0px 1px #499cb3; }
-.syntax_vscode .bhsh_class { color: #4ec9b0; text-shadow:0px 0px 1px #499cb3; }
+.syntax_vscode .bhsh_class { color: #4ec9b0; text-shadow:0px 0px 1px #4ec9b0; }
 .syntax_vscode .bhsh_number { color: #b5cea8; }
 .syntax_vscode .bhsh_comment { color: #6a9955; }
 .syntax_vscode .bhsh_annotation { color: #777777; }
