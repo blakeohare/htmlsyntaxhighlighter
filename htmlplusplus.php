@@ -73,6 +73,7 @@
         private $bookmark_list = array();
         private $table_of_contents_index = null;
         private $output = array();
+        private $backticks_for_inline_code_enabled = false;
 
         private $valid_tag_chars = array();
 
@@ -141,6 +142,10 @@
                     }
                     break;
 
+                case 'enablebackticks':
+                case 'disablebackticks':
+                    break;
+
                 case 'note':
                 case 'warning':
                     $this->output('<div class="' . $tag['@name'] . '_box">');
@@ -183,6 +188,11 @@
                     $this->comment_nest_level--;
                     break;
 
+                case 'enablebackticks':
+                case 'disablebackticks':
+                    $this->backticks_for_inline_code_enabled = $opener['@name'] === 'enablebackticks';
+                    break;
+
                 case 'bookmark':
                     $uid = $opener['@uid'];
                     $label = implode('', $this->active_text_listeners[$uid]);
@@ -195,13 +205,11 @@
                     break;
 
                 case 'image':
-                    print_r($opener);
                     if (isset($opener['@url'])) {
                         $url = trim($opener['@url']);
                         $alt_text = trim($opener['alt']);
                         if ($alt_text === '') {
                             $t = explode('/', $url);
-                            print_r($t);
                             $alt_text = htmlspecialchars($t[count($t) - 1]);
                         }
 
@@ -259,7 +267,7 @@
         }
 
         function parse() {
-            $mode = 'NORMAL'; // { NORMAL | CODE | IMAGE }
+            $mode = 'NORMAL'; // { NORMAL | CODE | IMAGE | INLINECODE }
             $stack = array();
             $mode_stack = array('NORMAL');
 
@@ -275,6 +283,10 @@
                             $this->set_attribute_on_top_tag('@code', $token['value']);
                         } else if ($mode === 'IMAGE') {
                             $this->set_attribute_on_top_tag('@url', $token['value']);
+                        } else if ($mode === 'INLINECODE') {
+                            $this->output('<span class="inline_code">');
+                            $this->output_text(htmlspecialchars($token['value']));
+                            $this->output('</span>');
                         } else {
                             $this->output_text($token['value']);
                         }
@@ -311,6 +323,21 @@
                         $this->pop_tag($token['value']['@name']);
                         break;
 
+                    case 'BACKTICK':
+                        if (!$this->backticks_for_inline_code_enabled) {
+                            $this->output('`');
+                        } else if ($mode === 'NORMAL') {
+                            array_push($mode_stack, 'INLINECODE');
+                            $mode = 'INLINECODE';
+                        } else if ($mode === 'INLINECODE') {
+                            $mode = 'NORMAL';
+                            array_pop($mode_stack);
+                        } else {
+                            // this shouldn't happen.
+                            $this->output('`');
+                        }
+                        break;
+
                     case 'PIPE':
                         $this->output('|');
                         break;
@@ -322,7 +349,6 @@
             }
 
             $output = implode($this->output);
-            //print_r($this);
             if ($this->table_of_contents_index !== null && count($this->bookmark_list) > 0) {
 
                 $i = $this->table_of_contents_index;
@@ -377,7 +403,13 @@
                 return array('type' => 'TEXT', 'value' => substr($this->str, $start));
             }
 
-            switch ($this->str[$this->index]) {
+            $c = $this->str[$this->index];
+            if ($c === '`' && $this->backticks_for_inline_code_enabled) {
+                $this->index++;
+                return array('type' => 'BACKTICK');
+            }
+
+            switch ($c) {
                 case '|':
                     $this->index++;
                     return array('type' => 'PIPE');
@@ -389,15 +421,21 @@
                         $c2 = strtolower($this->str[$this->index + 1]);
                         if ($c2 === '!') throw new Exception("HTML++ does not support <!-- comments. Just use <comment>...</comment> or <tag comment=\"...\"> instead.");
                         if ($c2 === '/') return array('type' => 'CLOSETAG', 'value' => $this->pop_token_close_tag());
-                        if (ord($c2) >= ord('a') && ord($c2) <= ord('z')) return array('type' => 'OPENTAG', 'value' => $this->pop_token_open_tag());
+                        if (ord($c2) >= ord('a') && ord($c2) <= ord('z')) {
+                            $tag = $this->pop_token_open_tag();
+                            $type = 'OPENTAG';
+                            if ($tag['@isclose']) {
+                                unset($tag['@isclose']);
+                                $type = 'SELFCLOSETAG';
+                            }
+                            return array('type' => $type, 'value' => $tag);
+                        }
                     }
                     $this->index++;
                     return array('type' => 'TEXT', 'value' => '&lt;'); // it's a loose < character that will get converted into &lt;
 
-                    break;
-
                 default:
-                    return array('type' => 'TEXT', 'value' => $this->pop_token_text());
+                    return array('type' => 'TEXT', 'value' => $this->pop_token_text($mode));
             }
         }
 
@@ -505,15 +543,22 @@
             return $tag_name;
         }
 
-        function pop_token_text() {
+        function pop_token_text($mode) {
             $start = $this->index;
             for ($i = $start; $i < $this->length; ++$i) {
-                switch ($this->str[$i]) {
+                $c = $this->str[$i];
+                switch ($c) {
                     case "\n":
                     case "|":
                     case "<":
                         $this->index = $i;
                         return substr($this->str, $start, $this->index - $start);
+                    case "`":
+                        if ($this->backticks_for_inline_code_enabled) {
+                            $this->index = $i;
+                            return substr($this->str, $start, $this->index - $start);
+                        }
+                        break;
                 }
             }
             $this->index = $this->length;

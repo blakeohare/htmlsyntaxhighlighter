@@ -41,13 +41,25 @@ class Meow:
 
     <header><bookmark>Topic 2</bookmark></header>
 
-    Lorem ipsum dolar sit amet
+        <enablebackticks/>
+
+    <p>
+    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
+    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
+    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
+    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
+    `This is some code`
+    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
+    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
+    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
+    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
+    </p>
 
     <div>
     <image mouseover="totoro">https://twocansandstring.com/uploads/drawn/4712.png</image>
     </div>
 
-    <p>5</p>
+    <p>13</p>
     ';
 
     $rendered_content = (new HtmlPlusPlusParser($content))->parse();
