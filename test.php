@@ -48,7 +48,7 @@ class Meow:
     Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
     Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
     Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
-    `This is some code`
+    `This is some code` `and here is some ``inline`` code inline with ``backticks```
     Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
     Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
     Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
@@ -59,7 +59,7 @@ class Meow:
     <image mouseover="totoro">https://twocansandstring.com/uploads/drawn/4712.png</image>
     </div>
 
-    <p>13</p>
+    <p>14</p>
     ';
 
     $rendered_content = (new HtmlPlusPlusParser($content))->parse();

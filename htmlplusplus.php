@@ -555,8 +555,12 @@
                         return substr($this->str, $start, $this->index - $start);
                     case "`":
                         if ($this->backticks_for_inline_code_enabled) {
-                            $this->index = $i;
-                            return substr($this->str, $start, $this->index - $start);
+                            if ($i + 1 < $this->length && $this->str[$i + 1] === '`') { // double backticks to escape
+                                $i++;
+                            } else {
+                                $this->index = $i;
+                                return str_replace('``', '`', substr($this->str, $start, $this->index - $start));
+                            }
                         }
                         break;
                 }
