@@ -54,7 +54,7 @@
                 $right_length -= 1;
             }
 
-            $common_footer = array_reverse($footer);
+            $footer = array_reverse($footer);
 
             $offset = 0;
             while ($left_length - $offset > 0 && $right_length - $offset > 0 && $left[$offset] === $right[$offset]) {
