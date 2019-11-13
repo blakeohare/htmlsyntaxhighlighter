@@ -9,6 +9,13 @@
 
     <tableofcontents/>
 
+    <code class="syntax_vscode" language="json">
+ {
+    "foo": [1, 2, 3.14, true, false, null],
+    "bar": "This is a \n\t\u1234String"
+}
+    </code>
+
     <code class="syntax_vscode" language="python">
 
 def foo():
@@ -36,7 +43,7 @@ class Meow:
 
     <header><bookmark>Topic 1</bookmark></header>
 
-    Lorem ipsum dolar sit amet
+    Lorem ipsum dolor sit amet
 
 
     <header><bookmark>Topic 2</bookmark></header>
@@ -44,15 +51,15 @@ class Meow:
         <enablebackticks/>
 
     <p>
-    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
-    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
-    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
-    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
+    Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
+    Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
+    Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
+    Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
     `This is some code` `and here is some ``inline`` code inline with ``backticks```
-    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
-    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
-    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
-    Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet Lorem ipsum dolar sit amet
+    Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
+    Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
+    Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
+    Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
     </p>
 
     <div>

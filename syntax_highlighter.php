@@ -31,15 +31,21 @@
         function __construct($language) {
             $this->language = strtolower(trim($language));
             switch ($language) {
-                case 'none':
+
+                case 'json':
+                    $this->tab_size = 4;
+                    $this->string_types = array('"');
                     break;
+
                 case 'python':
                     $this->tab_size = 2;
                     $this->string_types = array('"', "'");
                     $this->comment_types = array('#');
                     break;
+
+                case 'none':
                 default:
-                    throw new Exception($language . " is not currently supported by the syntax highlighter.");
+                    break;
             }
             $this->token_lookup = $this->build_lookup_table();
 
@@ -52,6 +58,7 @@
         }
 
         private function build_lookup_table() {
+            $control_flow = array();
             $keywords = array();
             $constants = array();
             $classes = array();
@@ -62,6 +69,14 @@
                     $keywords = explode(' ', 'and as class def from in lambda not or print');
                     $constants = explode(' ', 'False None self super True');
                     $classes = explode(' ', 'Exception');
+                    break;
+
+                case 'json':
+                    $constants = explode(' ', 'null true false');
+                    break;
+
+                case 'none':
+                default:
                     break;
             }
 
