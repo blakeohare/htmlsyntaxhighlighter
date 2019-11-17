@@ -93,7 +93,7 @@
 			// trim off trailing slash
 			if ($path[strlen($path) - 1] === '/') $path = substr($path, 0, strlen($path) - 1);
 
-			$url_parts = explode('/', $path);
+			$url_parts = $path === '' ? array() : explode('/', $path);
 
 			foreach ($this->routes as $routing_instruction) {
 				$vars = $this->get_vars_if_match($url_parts, $routing_instruction['pattern']);
