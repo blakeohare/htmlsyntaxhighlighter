@@ -7,6 +7,7 @@
 		var $ip;
 		var $method;
 		var $content;
+		var $content_type;
 		var $form;
 		var $query;
 		var $json;
@@ -42,7 +43,9 @@
 				array_push($this->url_parts, $url_parts[$i]);
 			}
 
-			$this->json = string_starts_with(trim($_SERVER["CONTENT_TYPE"]), 'application/json')
+			$this->content_type = strtolower(trim(explode(';', $_SERVER["CONTENT_TYPE"])[0]));
+
+			$this->json = $this->content_type === 'application/json'
 				? json_decode($this->content, true)
 				: null;
 		}
