@@ -28,7 +28,6 @@
             for ($i = 0; $i < $len; ++$i) {
                 array_push($nums, ord($byte_str[$i]));
             }
-            print_r($nums);
             for ($i = $start_index; $i < $len; ++$i) {
                 $cc = $nums[$i];
                 if ((0x80 & $cc) === 0) {

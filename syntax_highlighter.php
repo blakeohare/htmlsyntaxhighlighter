@@ -43,6 +43,11 @@
                     $this->comment_types = array('#');
                     break;
 
+                case 'javascript':
+                    $this->tab_size = 4;
+                    $this->string_types = array('"', "'");
+                    $this->comment_types = array('//', '/*');
+
                 case 'none':
                 default:
                     break;
@@ -65,10 +70,17 @@
 
             switch ($this->language) {
                 case 'python':
-                    $control_flow = explode(' ', 'continue elif else except finally for if import pass raise return try while with yield');
+                    $control_flow = explode(' ', 'break continue elif else except finally for if import in pass raise return try while with yield');
                     $keywords = explode(' ', 'and as class def from in lambda not or print');
                     $constants = explode(' ', 'False None self super True');
                     $classes = explode(' ', 'Exception');
+                    break;
+
+                case 'javascript':
+                    $control_flow = explode(' ', 'break case continue default else except finally for if import return switch throw try while');
+                    $keywords = explode(' ', 'class const function in let new of var');
+                    $constants = explode(' ', 'arguments document false globalThis Infinity NaN null prototype super this true undefined window');
+                    $classes = explode(' ', 'Array BigInt Date Error JSON Map Math Number Object Promise RegExp Set String');
                     break;
 
                 case 'json':

@@ -17,6 +17,21 @@
 }
     </code>
 
+    <code class="syntax_vscode" language="javascript">
+function sayHello() {
+  console.log("Hello, World!");
+  for (let i = 0; i < 10; ++i) {
+    const x = Math.pow(i, 4);
+    window.alert("X is " + x);
+  }
+  switch (42) {
+    case 8:
+      let meow = (() => { throw new Error("lol"); /* lol */ })(); // meow
+      break;
+  }
+}
+    </code>
+
     <code class="syntax_vscode" language="python">
 
 def foo():
