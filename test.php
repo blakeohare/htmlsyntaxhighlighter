@@ -1,5 +1,6 @@
 <?php
 
+    require_once 'TextUtil.php';
     require_once 'syntax_highlighter.php';
     require_once 'htmlplusplus.php';
 

@@ -298,8 +298,8 @@
 
         function __construct($str, $string_types, $comment_types) {
             $this->index = 0;
-            $this->str = $str;
-            $this->length = strlen($str);
+            $this->str = TextUtil::decode_to_characters($str);
+            $this->length = count($this->str);
 
             $this->nums = array();
             $this->letters = array();
@@ -360,9 +360,22 @@
                     break;
             }
 
-            $c = mb_substr($this->str, $this->index, 1);
-            $this->index += strlen($c);
+            $this->index++;
             return $c;
+        }
+
+        function _substr($start, $len) {
+            if ($len < 2) {
+                if ($len === 0) return '';
+                return $this->str[$start];
+            }
+            $output = array();
+            $end = $start + $len;
+            if ($end > $this->length) $end = $this->length;
+            for ($i = $start; $i < $end; ++$i) {
+                array_push($output, $this->str[$i]);
+            }
+            return implode('', $output);
         }
 
         function pop_till($terminator, $including_terminator) {
@@ -371,13 +384,13 @@
             $term_char = $terminator[0];
             $term_len = strlen($terminator);
             for ($i = $start; $i < $this->length; ++$i) {
-                if ($this->str[$i] === $term_char && substr($this->str, $i, $term_len)) {
+                if ($this->str[$i] === $term_char && $this->_substr($i, $term_len) === $terminator) {
                     $end = $i + ($including_terminator ? $term_len : 0);
                     break;
                 }
             }
             $this->index = $end;
-            return substr($this->str, $start, $end - $start);
+            return $this->_substr($start, $end - $start);
         }
 
         function pop_string($terminator) {
@@ -423,4 +436,5 @@
             return implode('', $sb);
         }
     }
+
 ?>
