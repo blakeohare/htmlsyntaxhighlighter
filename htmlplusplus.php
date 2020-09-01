@@ -1,4 +1,22 @@
 <?php
+
+    class HtmlPlusPlusException extends Exception {
+
+        public function __construct($message, $original_string, $index) {
+            $new_msg = array($message, "\n", "The problem occurred somewhere around: '");
+            $start = max(0, $index - 30);
+            $end = min($index + 30, strlen($original_string));
+            for ($i = $start; $i < $end; ++$i) {
+                $c = $original_string[$i];
+                if ((ord($c) & 0x80) > 0) $c = '?';
+                array_push($new_msg, $c);
+            }
+            array_push($new_msg, "'");
+            $message = implode('', $new_msg);
+            parent::__construct($message, 0, null);
+        }
+    }
+
     /*
         A simple server-side way to create content with complicated but automatic features such as table-of-contents, syntax highlighting in code snippets, and
         other.
@@ -88,6 +106,10 @@
             }
         }
 
+        private function makeError($msg) {
+            return new HtmlPlusPlusException($msg, $this->str, $this->index);
+        }
+
         private function output($s) {
             if ($this->comment_nest_level === 0) {
                 array_push($this->output, $s);
@@ -137,7 +159,7 @@
                             $this->output = array($content_so_far);
                             $this->table_of_contents_index = strlen($content_so_far);
                         } else {
-                            throw new Exception("Cannot have <tableofcontents> tag multiple times.");
+                            throw $this->makeError("Cannot have <tableofcontents> tag multiple times.");
                         }
                     }
                     break;
@@ -181,7 +203,7 @@
             if (count($this->stack) > 0) {
                 $opener = array_pop($this->stack);
             }
-            if ($opener === null || $opener['@name'] !== $tag) throw new Exception("</" . $tag . "> occurred without a corresponding open tag.");
+            if ($opener === null || $opener['@name'] !== $tag) throw $this->makeError("</" . $tag . "> occurred without a corresponding open tag.");
 
             switch ($tag) {
                 case 'comment':
@@ -262,7 +284,7 @@
         }
 
         function set_attribute_on_top_tag($name, $value) {
-            if (count($this->stack) === 0) throw new Exception("No top tag");
+            if (count($this->stack) === 0) throw $this->makeError("No top tag");
             $this->stack[count($this->stack) - 1][$name] = $value;
         }
 
@@ -343,7 +365,7 @@
                         break;
 
                     default:
-                        throw new Exception("Unknown token type: '" . $token['type'] . "'");
+                        throw $this->makeError("Unknown token type: '" . $token['type'] . "'");
 
                 }
             }
@@ -409,6 +431,10 @@
                 return array('type' => 'BACKTICK');
             }
 
+            if ($mode === 'INLINECODE') {
+                return array('type' => 'TEXT', 'value' => $this->pop_token_text($mode));
+            }
+
             switch ($c) {
                 case '|':
                     $this->index++;
@@ -419,7 +445,7 @@
                 case '<':
                     if ($this->index + 1 < $this->length) {
                         $c2 = strtolower($this->str[$this->index + 1]);
-                        if ($c2 === '!') throw new Exception("HTML++ does not support <!-- comments. Just use <comment>...</comment> or <tag comment=\"...\"> instead.");
+                        if ($c2 === '!') throw $this->makeError("HTML++ does not support <!-- comments. Just use <comment>...</comment> or <tag comment=\"...\"> instead.");
                         if ($c2 === '/') return array('type' => 'CLOSETAG', 'value' => $this->pop_token_close_tag());
                         if (ord($c2) >= ord('a') && ord($c2) <= ord('z')) {
                             $tag = $this->pop_token_open_tag();
@@ -455,7 +481,7 @@
         }
 
         function pop_if_present($value) {
-            if ($value === '') throw new Exception("Invalid argument: empty string");
+            if ($value === '') throw $this->makeError("Invalid argument: empty string");
             if ($this->index >= $this->length) return false;
             if ($this->str[$this->index] !== $value[0]) return false;
             $len = strlen($value);
@@ -469,7 +495,7 @@
         function pop_expected($value) {
             if (!$this->pop_if_present($value)) {
                 // TODO: write a function to convert index into line and col or print out the previous and following 20 characters or something.
-                throw new Exception("Expected: '" . $value . "'");
+                throw $this->makeError("Expected: '" . $value . "'");
             }
         }
 
@@ -492,7 +518,7 @@
             $output = array();
             $this->pop_expected('<');
             $tag_name = $this->pop_simple_word();
-            if ($tag_name === null) throw new Exception("Expected tag name");
+            if ($tag_name === null) throw $this->makeError("Expected tag name");
             $output = array('@name' => $tag_name);
             while (true) {
                 $this->skip_whitespace();
@@ -507,7 +533,7 @@
                 }
 
                 $attribute_name = $this->pop_simple_word();
-                if ($attribute_name === null) throw new Exception("Expected attribute name.");
+                if ($attribute_name === null) throw $this->makeErrorception("Expected attribute name.");
                 $this->skip_whitespace();
                 $this->pop_expected('=');
                 $this->skip_whitespace();
@@ -527,7 +553,7 @@
                         return substr($this->str, $start + 1, $this->index - $start - 2);
                     }
                 }
-                throw new Exception("Unclosed string");
+                throw $this->makeError("Unclosed string");
             } else {
                 return $this->pop_simple_word();
             }
@@ -537,7 +563,7 @@
             $this->pop_expected('<');
             $this->pop_expected('/');
             $tag_name = $this->pop_simple_word();
-            if ($tag_name === null) throw new Exception("Expected a tag name.");
+            if ($tag_name === null) throw $this->makeError("Expected a tag name.");
             $this->skip_whitespace(); // I think this is technically valid.
             $this->pop_expected('>');
             return $tag_name;
@@ -551,6 +577,10 @@
                     case "\n":
                     case "|":
                     case "<":
+                        if ($mode === 'INLINECODE') {
+                            if ($c === "\n") throw $this->makeError("Cannot have newline in inline code");
+                            break;
+                        }
                         $this->index = $i;
                         return substr($this->str, $start, $this->index - $start);
                     case "`":
