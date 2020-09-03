@@ -533,7 +533,7 @@
                 }
 
                 $attribute_name = $this->pop_simple_word();
-                if ($attribute_name === null) throw $this->makeErrorception("Expected attribute name.");
+                if ($attribute_name === null) throw $this->makeError("Expected attribute name.");
                 $this->skip_whitespace();
                 $this->pop_expected('=');
                 $this->skip_whitespace();
