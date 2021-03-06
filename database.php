@@ -216,6 +216,10 @@
             $values = array();
             foreach ($columns as $key => $value) {
                 array_push($fields, "`$key`");
+                $value = '' . $value;
+                if (strlen($value) > 65535) {
+                    $value = substr($value, 0, 65535);
+                }
                 array_push($values, "'" . $this->connection->real_escape_string($value) . "'");
             }
             $fields = implode(', ', $fields);
@@ -246,6 +250,10 @@
                     $sql_value = $value;
                 } else {
                     $actual_key = $key;
+                    $value = '' . $value;
+                    if (strlen($value) > 65535) {
+                        $value = substr($value, 0, 65535);
+                    }
                     $sql_value = "'" . $this->connection->real_escape_string($value) . "'";
                 }
 
