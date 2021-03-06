@@ -125,12 +125,12 @@
                 $s = trim($s);
                 $len = strlen($s);
                 if ($len >= 3) {
-                    for (array(0, $len - 3) as $i) {
+                    foreach (array(0, $len - 3) as $i) {
                         if (ord($s[$i]) === 0xE2 && ord($s[$i + 1]) === 0x80 && ord($s[$i + 2]) === 0x8B) {
                             if ($i === 0) {
                                 $s = substr($s, 3);
                             } else {
-                                $s = substr(0, strlen($s) - 3);
+                                $s = substr($s, 0, strlen($s) - 3);
                             }
                             break;
                         }
