@@ -338,12 +338,13 @@
         // * RTRIM_LINES - trims the whitespace from the end of lines
         public static function canonicalize_string($str, $actions) {
 
-            $nbsp = chr(194) . chr(160);
-            $zwsp = chr(226) . chr(128) . chr(139);
+            $nbsp = chr(194) . chr(160); // non-breaking space
+            $zwsp = chr(226) . chr(128) . chr(139); // zero-width space
+            $fwsp = chr(227) . chr(128) . chr(128); // full-width space
 
             if (TextUtil::$_whitespace_chars_utf8 === null) {
                 TextUtil::$_whitespace_chars_utf8 = array();
-                foreach (array(' ', "\r", "\n", "\t", $nbsp, $zwsp) as $ws) {
+                foreach (array(' ', "\r", "\n", "\t", $nbsp, $zwsp, $fwsp) as $ws) {
                     TextUtil::$_whitespace_chars_utf8[$ws] = true;
                 }
             }
