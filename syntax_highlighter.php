@@ -310,7 +310,7 @@
 
         function __construct($str, $string_types, $comment_types) {
             $this->index = 0;
-            $this->str = TextUtil::decode_to_characters($str);
+            $this->str = TextUtil::to_utf8_chars($str);
             $this->length = count($this->str);
 
             $this->nums = array();
