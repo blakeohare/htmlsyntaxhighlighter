@@ -182,8 +182,8 @@
                 $query = nl2br($query);
 
                 echo '<div style="text-align:left;padding:12px;font-family:&quot;Lucida Console&quot;; background-color:#fee; border:1px solid #f00; color:#000;">';
-                echo '<div style="font-weight:bold;font-style:italic;">'.$error.'</div>';
-                echo '<div style="padding-top:12px; font-size:13px; color:#555; padding-bottom:6px;">'.$query.'</div>';
+                echo '<div style="font-weight:bold;font-style:italic;">' . $error . '</div>';
+                echo '<div style="padding-top:12px; font-size:13px; color:#555; padding-bottom:6px;">' . $query . '</div>';
                 echo '<div style="border-top:1px solid #000;">';
                 echo '<pre>';
                 debug_print_backtrace();
@@ -209,6 +209,14 @@
             return $this->connection->affected_rows;
         }
 
+        function ensure_utf8_string($str) {
+            $chars = TextUtil::to_utf8_chars('' . $str);
+            if (count($chars) > 65535) {
+                $chars = array_slice($chars, 0, 65535);
+            }
+            return implode('', $chars);
+        }
+
         function insert($table, $columns, $try = false) {
             $this->get_connection();
 
@@ -216,10 +224,7 @@
             $values = array();
             foreach ($columns as $key => $value) {
                 array_push($fields, "`$key`");
-                $value = '' . $value;
-                if (strlen($value) > 65535) {
-                    $value = substr($value, 0, 65535);
-                }
+                $value = $this->ensure_utf8_string($value);
                 array_push($values, "'" . $this->connection->real_escape_string($value) . "'");
             }
             $fields = implode(', ', $fields);
@@ -250,10 +255,7 @@
                     $sql_value = $value;
                 } else {
                     $actual_key = $key;
-                    $value = '' . $value;
-                    if (strlen($value) > 65535) {
-                        $value = substr($value, 0, 65535);
-                    }
+                    $value = $this->ensure_utf8_string($value);
                     $sql_value = "'" . $this->connection->real_escape_string($value) . "'";
                 }
 
